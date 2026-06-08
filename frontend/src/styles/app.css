@@ -30,6 +30,14 @@ body {
   background-attachment: fixed;
 }
 
+/* for text spacing control*/
+.bubble p { margin: 0 0 8px; }
+.bubble p:last-child { margin-bottom: 0; }
+.bubble h1, .bubble h2, .bubble h3 { margin: 14px 0 6px; font-size: 1.05em; }
+.bubble ul, .bubble ol { margin: 6px 0; padding-left: 20px; }
+.bubble li { margin: 2px 0; }
+.bubble li p { margin: 0; }
+
 /* ---- App shell ---- */
 .app { height: 100vh; display: flex; flex-direction: row; }
 
@@ -356,3 +364,9 @@ body {
   font-family: var(--font-mono); font-size: 13px; color: #fff;
   background: linear-gradient(135deg, var(--accent-2), var(--accent));
 }
+
+.thread { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.18) transparent; }
+.thread::-webkit-scrollbar { width: 8px; }
+.thread::-webkit-scrollbar-track { background: transparent; }
+.thread::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 4px; }
+.thread::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }

@@ -11,4 +11,5 @@ export default defineConfig({
       '/api': 'http://localhost:8000',
     },
   },
+  resolve: { dedupe: ['three'] },
 })

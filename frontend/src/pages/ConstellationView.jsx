@@ -24,17 +24,25 @@ export default function ConstellationView({ graphData }) {
         graphData={data}
         backgroundColor="#06061a"
         nodeColor={(n) => GROUP_COLORS[n.group] || '#888888'}
-        nodeVal="val"
+        nodeVal={(n) => (n.val || 4) * 0.3}
         nodeOpacity={0.95}
-        linkColor={() => 'rgba(170,180,255,0.22)'}
-        linkWidth={0.6}
+        linkColor={() => '#ffd23f'}
+        linkWidth={1.2}
+        linkOpacity={0.9}
         nodeThreeObjectExtend={true}
         nodeThreeObject={(node) => {
           const sprite = new SpriteText(node.id)
-          sprite.color = GROUP_COLORS[node.group] || '#ffffff'
-          sprite.textHeight = 4
+          sprite.color = '#ffffff'
+          sprite.textHeight = 6
           sprite.fontFace = 'Manrope, sans-serif'
-          sprite.position.set(0, 7, 0)
+          sprite.fontWeight = 600
+          sprite.backgroundColor = 'rgba(0,0,0,0.45)'
+          sprite.padding = 2
+          sprite.borderRadius = 3
+          sprite.position.set(0, 0, 0)
+          sprite.material.depthTest = false
+          sprite.material.depthWrite = false
+          sprite.renderOrder = 999
           return sprite
         }}
       />

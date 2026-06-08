@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import Waveform from '../components/Waveform'
 import SignalLab from '../components/SignalLab'
+import ReactMarkdown from 'react-markdown'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+import 'katex/dist/katex.min.css'
 
 const MAX_BYTES = 20 * 1024 * 1024 // 20 MB per file
 
@@ -11,6 +15,12 @@ function Paperclip() {
     </svg>
   )
 }
+
+//helper to fix formulas and expressions in markdown
+const fixMath = (t) =>
+  (t || '')
+    .replace(/\\\[(.+?)\\\]/gs, (_, e) => `$$${e}$$`)
+    .replace(/\\\((.+?)\\\)/gs, (_, e) => `$${e}$`)
 
 export default function ChatView({ messages, sending, onSend, name }) {
   const [input, setInput] = useState('')
@@ -83,7 +93,7 @@ export default function ChatView({ messages, sending, onSend, name }) {
       <div className="thread" ref={threadRef}>
         {messages.map((m, i) => (
           <div key={i} className={`bubble ${m.role}`}>
-            {m.text}
+            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{fixMath(m.text)}</ReactMarkdown>
             {m.attachments?.length > 0 && (
               <div className="bubble-files">
                 {m.attachments.map((a, j) => (
