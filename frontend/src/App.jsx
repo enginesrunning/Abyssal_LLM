@@ -1,5 +1,5 @@
 import './styles/app.css'
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ChatView from './pages/ChatView'
 import ConstellationView from './pages/ConstellationView'
 import HistoryPanel from './components/HistoryPanel'
@@ -7,7 +7,6 @@ import LandingPage from './pages/LandingPage'
 import AuthForm from './pages/AuthForm'
 import { useChats } from './hooks/useChats'
 import { useAuth } from './hooks/useAuth'
-import { extractGraph } from './lib/domain'
 
 export default function App() {
   const auth = useAuth()
@@ -18,7 +17,23 @@ export default function App() {
   const [authScreen, setAuthScreen] = useState('landing')
   const { current, addMessage } = chats
 
-  const graph = useMemo(() => extractGraph(current.messages), [current.messages])
+  const [graph, setGraph] = useState({ nodes: [], links: [] })
+
+  useEffect(() => {
+  const text = current.messages.map((m) => m.text).join('\n')
+  if (!text.trim()) {
+    setGraph({ nodes: [], links: [] })
+    return
+  }
+  fetch('/api/graph', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+  })
+    .then((r) => r.json())
+    .then(setGraph)
+    .catch(() => {})
+}, [current.id, current.messages])
 
   async function handleSend(text, files) {
     addMessage({ role: 'user', text, attachments: files.map((f) => ({ name: f.name, type: f.type })), ts: Date.now() })

@@ -36,7 +36,6 @@ export default function HistoryPanel({ chats, onClose }) {
                 onClick={(e) => { e.stopPropagation(); deleteChat(c.id) }}
                 aria-label="Delete chat"
               >
-                ×
               </button>
             </div>
           ))}

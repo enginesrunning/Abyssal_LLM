@@ -218,6 +218,10 @@ async def chat(message: str = Form(""), files: List[UploadFile] = File(default=[
         return {"reply": f"(LLM error) {e}", "used_llm": False, "attached": attached}
 
 
-@app.get("/api/graph")
-def graph():
-    return {"nodes": [], "links": []}
+class GraphBody(BaseModel):
+    text: str = ""
+
+@app.post("/api/graph")
+def graph(body: GraphBody):
+    from graph_builder import build_graph
+    return build_graph(body.text)
