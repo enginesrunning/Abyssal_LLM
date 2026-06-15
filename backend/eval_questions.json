@@ -1,0 +1,42 @@
+[
+  { "question": "Which register configures the watchdog timer duration?", "answer_contains": "CONF_WDTIMER" },
+  { "question": "What register sets the device initialization delay?", "answer_contains": "EEP_INITTIMER" },
+  { "question": "What enables linear brightness control?", "answer_contains": "CONF_EXPEN" },
+  { "question": "At what register offset is PWM channel 0?", "answer_contains": "20h" },
+
+  { "question": "Which register enables exponential dimming mode?", "answer_contains": "CONF_EXPEN" },
+  { "question": "Which register selects the PWM dimming frequency?", "answer_contains": "CONF_PWMFREQ" },
+  { "question": "Which register chooses between the internal and external PWM clock?", "answer_contains": "CONF_EXTCLK" },
+  { "question": "Which EEPROM bit releases the address pins for PWM and clock functions?", "answer_contains": "EEP_INTADDR" },
+
+  { "question": "Which register selects the ADC channel to convert?", "answer_contains": "CONF_ADCCH" },
+  { "question": "Where is the ADC conversion result stored?", "answer_contains": "ADC_OUT" },
+  { "question": "Which flag indicates ADC conversion completion?", "answer_contains": "FLAG_ADCDONE" },
+  { "question": "Which register stores the automatic supply-voltage ADC measurement?", "answer_contains": "ADC_SUPPLY" },
+
+  { "question": "Which register sets the low-supply warning threshold?", "answer_contains": "CONF_ADCLOWSUPTH" },
+  { "question": "Which flag is asserted when supply voltage falls below the configured threshold?", "answer_contains": "FLAG_ADCLOWSUP" },
+  { "question": "What register clears low-supply warning and other fault flags?", "answer_contains": "CLR_FAULT" },
+
+  { "question": "Which register enables or disables output channel x?", "answer_contains": "CONF_ENCHx" },
+  { "question": "Which register sets the 6-bit current level for an output channel?", "answer_contains": "CONF_IOUTx" },
+  { "question": "Which register selects the reference-current gain range?", "answer_contains": "CONF_REFRANGE" },
+  { "question": "What pin is used to set the reference current with an external resistor?", "answer_contains": "REF" },
+
+  { "question": "Which register contains the upper 8 bits of the PWM duty-cycle setting?", "answer_contains": "CONF_PWMOUT" },
+  { "question": "Which register contains the lower 4 bits of the PWM duty-cycle setting?", "answer_contains": "CONF_PWMLOWOUT" },
+  { "question": "Which register allows all channels to share channel 0 PWM settings?", "answer_contains": "CONF_SHAREPWM" },
+
+  { "question": "Which register controls the diagnostic pulse width used by output diagnostics?", "answer_contains": "CONF_ODPW" },
+  { "question": "Which register clears the power-on-reset flag and exits INIT state early?", "answer_contains": "CLR_POR" },
+  { "question": "Which register reloads EEPROM values into shadow registers?", "answer_contains": "CLR_REG" },
+
+  { "question": "Which flag records that a power-on reset has occurred?", "answer_contains": "FLAG_POR" },
+  { "question": "Which flag indicates a reference resistor fault?", "answer_contains": "FLAG_REF" },
+  { "question": "Which flag indicates a pre-thermal warning condition?", "answer_contains": "FLAG_PRETSD" },
+  { "question": "Which flag indicates overtemperature shutdown?", "answer_contains": "FLAG_TSD" },
+
+  { "question": "Which mask register prevents CRC faults from being reported through ERR and fault flags?", "answer_contains": "CONF_MASKCRC" },
+  { "question": "Which mask register suppresses LED open-circuit fault reporting?", "answer_contains": "CONF_MASKOPEN" },
+  { "question": "Which mask register suppresses LED short-circuit fault reporting?", "answer_contains": "CONF_MASKSHORT" }
+]

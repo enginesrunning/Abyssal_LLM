@@ -86,9 +86,20 @@ body {
 .history-item-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .history-title { font-size: 14px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .history-meta { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); letter-spacing: 0.3px; }
-.history-del { opacity: 0; background: none; border: none; color: var(--text-dim); font-size: 16px; cursor: pointer; line-height: 1; transition: opacity 0.15s, color 0.15s; }
-.history-item:hover .history-del { opacity: 1; }
-.history-del:hover { color: #f87171; }
+.history-del {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 6px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #ff6b6b;
+  cursor: pointer;
+}
+.history-del:hover { background: rgba(255, 107, 107, 0.15); }
+
 
 .topbar {
   display: flex; align-items: center; justify-content: space-between;

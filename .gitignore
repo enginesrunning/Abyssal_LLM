@@ -4,6 +4,7 @@ backend/users.db
 __pycache__/
 *.pyc
 backend/.env
+backend/chroma_db/
 
 # Node
 frontend/node_modules/

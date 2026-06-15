@@ -23,6 +23,8 @@ from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadF
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from rag import ingest, retrieve
+
 load_dotenv()
 
 LLM_API_KEY = os.getenv("LLM_API_KEY", "").strip()
@@ -171,7 +173,7 @@ def extract_pdf(data: bytes) -> str:
         import fitz
 
         doc = fitz.open(stream=data, filetype="pdf")
-        return "\n".join(page.get_text() for page in doc)[:4000]
+        return "\n".join(page.get_text() for page in doc)
     except Exception as e:  # noqa: BLE001
         return f"[pdf could not be read: {e}]"
 
@@ -179,7 +181,7 @@ def extract_pdf(data: bytes) -> str:
 def extract_file(name: str, ctype: str, data: bytes) -> str:
     lower = name.lower()
     if ctype.startswith("text") or lower.endswith((".txt", ".md", ".csv")):
-        return data.decode("utf-8", errors="ignore")[:4000]
+        return data.decode("utf-8", errors="ignore")
     if lower.endswith(".pdf"):
         return extract_pdf(data)
     return f"[image/binary file: {name}, {len(data)} bytes — not yet parsed]"
@@ -189,34 +191,50 @@ def extract_file(name: str, ctype: str, data: bytes) -> str:
 def health():
     return {"status": "ok", "llm_configured": bool(LLM_API_KEY)}
 
-
 @app.post("/api/chat")
 async def chat(message: str = Form(""), files: List[UploadFile] = File(default=[])):
     extracted = []
     for f in files:
         data = await f.read()
-        extracted.append((f.filename or "file", extract_file(f.filename or "file", f.content_type or "", data)))
+        text = extract_file(f.filename or "file", f.content_type or "", data)
+        extracted.append((f.filename or "file", text))
 
-    prompt = message
-    if extracted:
-        joined = "\n".join(f"--- {n} ---\n{t[:1500]}" for n, t in extracted)
-        prompt = f"{message}\n\nAttached files:\n{joined}"
+    # RAG step 1: store any uploaded files in the vector DB
+    for name, text in extracted:
+        if text and text.strip():
+            ingest(text, source=name)
+
+    # RAG step 2: retrieve the most relevant chunks for this question
+    context_chunks = retrieve(message, k=20) if message.strip() else []
+    
+
+    # RAG step 3: build a grounded prompt from the retrieved context
+    if context_chunks:
+        context = "\n\n".join(f"[{c['source']}] {c['text']}" for c in context_chunks)
+        prompt = (
+            "Use the following context from the user's documents to answer the question. "
+            "Cite the source name in brackets when you use it. If the context doesn't cover "
+            "the question, say so and answer from general knowledge.\n\n"
+            f"Context:\n{context}\n\nQuestion: {message}"
+        )
+    else:
+        prompt = message
 
     attached = [n for n, _ in extracted]
+    sources = sorted({c["source"] for c in context_chunks})
     client = get_client()
     if client is None:
         note = f" (attached: {', '.join(attached)})" if attached else ""
         return {"reply": f"(mock reply — no LLM key set){note} You said: {message or '[no text]'}",
-                "used_llm": False, "attached": attached}
+                "used_llm": False, "attached": attached, "sources": sources}
     try:
         completion = client.chat.completions.create(
             model=LLM_MODEL,
             messages=[{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": prompt or "(no message)"}],
         )
-        return {"reply": completion.choices[0].message.content, "used_llm": True, "attached": attached}
+        return {"reply": completion.choices[0].message.content, "used_llm": True, "attached": attached, "sources": sources}
     except Exception as e:  # noqa: BLE001
-        return {"reply": f"(LLM error) {e}", "used_llm": False, "attached": attached}
-
+        return {"reply": f"(LLM error) {e}", "used_llm": False, "attached": attached, "sources": sources}
 
 class GraphBody(BaseModel):
     text: str = ""
